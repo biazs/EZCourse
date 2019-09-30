@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width-device-width" />
-    <title>Index</title>
+    <title>@ViewData["Title"]</title>
 </head>
 
 <body>
@@ -15,6 +15,8 @@
     <div style="background-color:lightgray">
         Copyright 2017
     </div>
+
+    @RenderSection("Scripts", required: false)
 
 </body>
 </html>
