@@ -8,20 +8,9 @@ namespace EZCourse.Controllers
 {
     public class TestController : Controller
     {
-        public IActionResult JsonOut(int id, Person person)
+        public IActionResult Index()
         {
-            var obj = new
-            {
-                Id = id,
-                Person = person
-            };
-            return Json(obj);
-        }
-
-        public class Person
-        {
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
+            return View();
         }
 
     }
