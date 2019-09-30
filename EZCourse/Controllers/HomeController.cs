@@ -33,8 +33,12 @@ namespace EZCourse.Controllers
         public IActionResult Contact(Contact formData)
         {
 
+            if (!ModelState.IsValid)
+            {
+                return View(formData);
+            }
             return Json(formData);
-            return View();
+
         }
 
         public IActionResult Privacy()
