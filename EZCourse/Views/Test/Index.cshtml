@@ -2,12 +2,10 @@
 @{
 
     ViewData["Title"] = "Title of Test - Index";
-
+    var countHtml = $"<h2>{Model.Count} users</h2>";
 }
 
-
-<h1>Hi, I am Test - Index</h1>
-
+@Html.Raw(countHtml)
 <table class="table">
     <tr>
         <th>Id</th>
@@ -16,9 +14,10 @@
     @foreach (var user in Model)
     {
         <tr>
-            <th>@user.Id</th>
+            <th>@user.Id @(user.Id == 2 ? "*" : "")</th>
             <th>@user.Name</th>
         </tr>
     }
 </table>
+
 
