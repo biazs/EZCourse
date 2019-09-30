@@ -1,14 +1,24 @@
-﻿
+﻿@model List<EZCourse.Controllers.TestController.User>
 @{
-    Layout = "_TestLayout";
+
     ViewData["Title"] = "Title of Test - Index";
+
 }
 
 
 <h1>Hi, I am Test - Index</h1>
 
-@section Scripts{
-    <script>
-        alert('I am Test - Index');
-    </script>
-}
+<table class="table">
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+    </tr>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <th>@user.Id</th>
+            <th>@user.Name</th>
+        </tr>
+    }
+</table>
+

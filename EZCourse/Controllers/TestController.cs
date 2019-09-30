@@ -10,7 +10,21 @@ namespace EZCourse.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            var users = new List<User>
+            {
+                new User { Id =1, Name = "Mr Blue"},
+                new User { Id =2, Name = "Mr Green"},
+                new User { Id =3, Name = "Mr Purple"}
+            };
+
+
+            return View(users);
+        }
+
+        public class User
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
         }
 
     }
