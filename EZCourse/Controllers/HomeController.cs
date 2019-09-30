@@ -29,6 +29,14 @@ namespace EZCourse.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult Contact(Contact formData)
+        {
+
+            return Json(formData);
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
