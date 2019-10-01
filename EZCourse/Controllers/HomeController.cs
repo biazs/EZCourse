@@ -8,16 +8,19 @@ using EZCourse.Models;
 using MailKit.Net.Smtp;
 using MimeKit;
 using EZCourse.Services;
+using Microsoft.Extensions.Options;
 
 namespace EZCourse.Controllers
 {
     public class HomeController : Controller
     {
         readonly Services.Smtp _smtpService;
+        readonly ContactOptions _contactOptions;
 
-        public HomeController(Services.Smtp smtpService)
+        public HomeController(Services.Smtp smtpService, IOptions<ContactOptions> contactOptions)
         {
             _smtpService = smtpService;
+            _contactOptions = contactOptions.Value;
         }
 
         public IActionResult Index()
@@ -54,24 +57,6 @@ namespace EZCourse.Controllers
             _smtpService.SendSingle("Contact Form", htmlBody, textBody, "RM", "contact@domain.com",
                                     "noreply mysite", "noreply@domain");
 
-            /* using (var client = new SmtpClient())
-             {
-                 client.Connect("mail.domain.com");
-                 client.Authenticate("username", "password");
-                 var bodyBuilder = new BodyBuilder();
-                 bodyBuilder.HtmlBody = $"<p>{formData.Name} ({formData.Email})</p><p>{formData.Phone}</p><p>{formData.Message}</p>";
-                 bodyBuilder.TextBody = "{formData.Name} {formData.Email})\r\n{formData.Phone}\r\n{formData.Message}";
-
-                 var message = new MimeMessage();
-                 message.Body = bodyBuilder.ToMessageBody();
-                 message.From.Add(new MailboxAddress("noreply mysite", "noreply@video.com"));
-                 message.To.Add(new MailboxAddress("RM", "contact@domain.com"));
-                 message.Subject = "Contact Form";
-                 client.Send(message);
-
-                 client.Disconnect(true);
-
-             }*/
 
             TempData["Message"] = "Thank you! Your message is sent to us";
             return RedirectToAction("Contact");
