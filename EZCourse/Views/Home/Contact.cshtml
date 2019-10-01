@@ -1,6 +1,14 @@
 ﻿@model EZCourse.Models.Contact
 @{
     ViewData["Title"] = "Contact";
+    var message = TempData["Message"] as string;
+}
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert alert-dismissable alert-success">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p>@message</p>
+    </div>
 }
 
 <form asp-action="Contact">
