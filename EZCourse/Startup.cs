@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using EZCourse.Services;
+using EZCourse.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace EZCourse
 {
@@ -49,8 +51,12 @@ namespace EZCourse
             services.Configure<SmtpOptions>(Configuration);
             services.Configure<ContactOptions>(Configuration);
 
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<EZCourseContext>(options => options.UseSqlServer(connectionString));
+
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
             services.AddSingleton<Smtp, Smtp>();
+            services.AddSingleton<Cryptography>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
