@@ -6,16 +6,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EZCourse.Models.Entities;
+using EZCourse.Services;
+using EZCourse.Models.ViewModels;
 
 namespace EZCourse.Controllers
 {
     public class UserManagementController : Controller
     {
         private readonly EZCourseContext _context;
+        private readonly Cryptography _cryptography;
 
-        public UserManagementController(EZCourseContext context)
+        public UserManagementController(EZCourseContext context, Cryptography cryptography)
         {
             _context = context;
+            _cryptography = cryptography;
         }
 
         // GET: UserManagement
@@ -53,16 +57,31 @@ namespace EZCourse.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email")] User user)
+        public async Task<IActionResult> Create(UserManagementCreate model)
         {
             if (ModelState.IsValid)
             {
-                user.CreationDate = DateTime.UtcNow;
+                var user = new User()
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    CreationDate = DateTime.UtcNow,
+                };
+                var passwordSalt = Guid.NewGuid().ToString();
+                var userCredential = new UserCredential()
+                {
+                    PasswordSalt = passwordSalt,
+                    HashedPassword = _cryptography.HashSHA256(model.Password + passwordSalt),
+                };
+
+                user.UserCredential = userCredential;
+
                 _context.Add(user);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
-            return View(user);
+            return View(model);
         }
 
         // GET: UserManagement/Edit/5
@@ -86,23 +105,21 @@ namespace EZCourse.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Email,CreationDate")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Email,CreationDate")] User model)
         {
-            if (id != user.Id)
-            {
-                return NotFound();
-            }
+
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(user);
+                    var user = await _context.User.SingleOrDefaultAsync(m => m.Id == id);
+                    await TryUpdateModelAsync(user);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(user.Id))
+                    if (!UserExists(id))
                     {
                         return NotFound();
                     }
@@ -113,7 +130,7 @@ namespace EZCourse.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            return View(model);
         }
 
         // GET: UserManagement/Delete/5

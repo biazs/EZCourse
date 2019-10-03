@@ -4,12 +4,28 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.IO;
+using System.Text;
 
 namespace EZCourse.Services
 {
     public class Cryptography
     {
-        //public string HashSHA256(string value);
+        public string HashSHA256(string text)
+        {
+            // Create a SHA256   
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = Encoding.Unicode.GetBytes(text);
+                SHA256Managed hashstring = new SHA256Managed();
+                byte[] hash = hashstring.ComputeHash(bytes);
+                string hashString = string.Empty;
+                foreach (byte x in hash)
+                {
+                    hashString += String.Format("{0:x2}", x);
+                }
+                return hashString;
+            }
+        }
 
         //MSDN Code
         static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)
